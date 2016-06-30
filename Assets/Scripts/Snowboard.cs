@@ -33,8 +33,8 @@ public class Snowboard : MonoBehaviour {
 
 	void OnGUI(){
 		GUI.color = Color.red;
-		GUI.Label (new Rect (25, 25, 400, 25), "Horizontal " + hori); 
-		GUI.Label (new Rect (25, 50, 400, 25), "Vertical " + vert);
+		GUI.Label (new Rect (25, 200, 400, 25), "Horizontal " + hori); 
+		GUI.Label (new Rect (25, 250, 400, 25), "Vertical " + vert);
 	} 
 
     void FixedUpdate()
@@ -43,10 +43,6 @@ public class Snowboard : MonoBehaviour {
         {
             hori = Input.GetAxis("Horizontal");
             vert = Input.GetAxis("Vertical");
-            Debug.Log("Horizontal: " + hori + "Vertical: " + vert);
-     //       Debug.Log(started);
-     //       Debug.Log(timerPause);
-			Debug.Log(pMenu);
 
             if (hori != 0f || vert != 0f) // TODO: Problem bei Navigation man müsste mit beiden Füßen gleichzeitig abspringen damit er auf dem jeweiligen Punkt bleibt 
             {
@@ -80,6 +76,7 @@ public class Snowboard : MonoBehaviour {
     public void setDeactive()
     {
         active = false; 
+		gc.startTimer (false);
         rb.constraints = RigidbodyConstraints.FreezeAll;
     }       
     
@@ -87,6 +84,7 @@ public class Snowboard : MonoBehaviour {
     {
         active = true;
         timerPause = 0f;
+		gc.startTimer (true);
         rb.constraints = RigidbodyConstraints.None;
     } 
 }
