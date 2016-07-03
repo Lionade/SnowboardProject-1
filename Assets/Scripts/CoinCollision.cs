@@ -14,13 +14,13 @@ public class CoinCollision : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    
 	}
 
     void OnTriggerEnter(Collider col)
     {
 		if (col.gameObject.tag == "Player") {
-			gc.AddPoints ();
+            gc.AddPoints ();
 			Destroy (this.gameObject);
 		}
     }

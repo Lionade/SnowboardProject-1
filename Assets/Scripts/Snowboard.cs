@@ -5,16 +5,20 @@ using System;
 public class Snowboard : MonoBehaviour {
     public float druck;
     public float moveSpeed = 700f;
+    public float jumpForce = 3f;
     public Rigidbody rb;
 
 	private float hori;
 	private float vert;
+    private float velocity;
+    private float distToGround;
 	private Vector3 input;
     private GameController gc;
 	private GameObject pMenu; //Pause Menu
 	private float timerPause = 0f; //Timer to check for PauseMenu
 	private bool started = false;
-    private bool active = true; 
+    private bool active = true;
+    private bool onEnd = false; //
 
     void Start()
     {
@@ -35,6 +39,7 @@ public class Snowboard : MonoBehaviour {
 		GUI.color = Color.red;
 		GUI.Label (new Rect (25, 200, 400, 25), "Horizontal " + hori); 
 		GUI.Label (new Rect (25, 250, 400, 25), "Vertical " + vert);
+        GUI.Label (new Rect (25, 300, 400, 25), "Velocity " + velocity);
 	} 
 
     void FixedUpdate()
@@ -43,6 +48,7 @@ public class Snowboard : MonoBehaviour {
         {
             hori = Input.GetAxis("Horizontal");
             vert = Input.GetAxis("Vertical");
+            velocity = rb.velocity.magnitude;
 
             if (hori != 0f || vert != 0f) // TODO: Problem bei Navigation man müsste mit beiden Füßen gleichzeitig abspringen damit er auf dem jeweiligen Punkt bleibt 
             {
@@ -57,16 +63,15 @@ public class Snowboard : MonoBehaviour {
                 pMenu.SetActive(true);
                 started = false;
             }
-
-            if (rb.velocity.magnitude < 3) //Limit speed
+           if (rb.velocity.magnitude < 3) //Limit speed
                 rb.AddForce(transform.forward * 600f * Time.deltaTime);
 
+           transform.Rotate(0, hori, 0);          
 
-            transform.Rotate(0, hori, 0);
-
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded())
             {
-                rb.velocity = new Vector3(0, 4, 0); // bleibt stehen bei sprung
+                Vector3 force = transform.up * jumpForce;
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 started = true;
                 timerPause += Time.deltaTime;
             }
@@ -87,4 +92,19 @@ public class Snowboard : MonoBehaviour {
 		gc.startTimer (true);
         rb.constraints = RigidbodyConstraints.None;
     } 
+
+    bool isGrounded()
+    {
+        return Physics.Raycast(transform.position, -Vector3.up, 0.1f);
+    }
+
+    public void setOnEnd()
+    {
+        onEnd = true;
+    }
+
+    public bool isOnEnd()
+    {
+        return onEnd;
+    }
 }
